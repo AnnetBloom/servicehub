@@ -1,0 +1,7 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: servicehub
+      POSTGRES_USER: servicehub
+      POSTGRES_PASSWORD: secret
