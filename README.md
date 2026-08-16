@@ -15,3 +15,10 @@ template0   — системный шаблон
 template1   — системный шаблон
 
 \q - выход из psql
+
+
+docker compose -f docker/docker-compose.yml config - посмотреть конфиг compose файла
+
+docker compose -f docker/docker-compose.yml build php - построить только сервис php
+
+PostgreSQL доступен на localhost:5432 с  компьютера.

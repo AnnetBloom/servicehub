@@ -1,7 +1,17 @@
 services:
   postgres:
     image: postgres:17
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: servicehub
       POSTGRES_USER: servicehub
       POSTGRES_PASSWORD: secret
+  php:
+    build:
+      #context: ..  - берёт корень проекта servicehub как build context.
+      context: ..
+      dockerfile: docker/php/Dockerfile
+    # монтирует весь servicehub в PHP-контейнер.
+    volumes:
+      - ..:/var/www/html
