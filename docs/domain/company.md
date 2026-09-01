@@ -231,6 +231,7 @@ sites ─── site_contact ─── contacts
 
 device_history - пока не делаем
 Тем более твой пример с заменой уже можно частично представить через:
+Device lifecycle history may be introduced later if operational requirements show a need for structured tracking of device movements, maintenance, replacement and disposal.
 
 старое Device #15 → status = removed
 новое Device #28 → status = active
@@ -535,3 +536,123 @@ Company
 
 Contract
     belongsTo(Company::class)
+
+
+    ******
+
+    devices позволяет узнать состояние и основные даты устройства, но не даёт полноценную последовательную историю событий.
+
+Например, сейчас:
+
+devices
+
+id | site_id | installed_at | status
+15 | 1       | 2025-03-10   | removed
+27 | 1       | 2026-08-27   | active
+
+Мы можем понять:
+
+устройство №15 когда-то установили;
+сейчас оно снято;
+устройство №27 установили позже;
+оба были на site_id = 1.
+
+Но мы не знаем из самой devices, например:
+
+27 августа инженер снял №15 потому, что он сгорел, и вместо него установил №27.
+
+Это можно найти в ticket и comments, если инженер это написал. Но это уже текст, а не структурированные данные.
+
+И вот здесь есть два разных понятия, которые важно не смешать:
+
+devices — текущее состояние
+
+Она отвечает примерно на:
+
+Что это за устройство и что с ним сейчас?
+
+Device #27
+Site #1
+installed_at: 2026-08-27
+status: active
+serial_number: XYZ789
+История — события
+
+Она отвечает:
+
+Что происходило с устройством во времени?
+
+2025-03-10 → установлено
+2026-05-12 → отправлено на обслуживание
+2026-05-20 → возвращено
+2026-08-27 → снято
+
+
+Сделаем простую специализированную историю жизненного цикла устройства.
+
+device_history
+--------------
+id
+device_id
+event_type
+old_site_id nullable
+new_site_id nullable
+changed_by
+notes nullable
+created_at
+
+event_type:
+
+installed
+moved
+sent_to_repair
+returned_from_repair
+removed
+written_off
+Как это будет выглядеть
+
+Перенесли устройство:
+
+device_id = 15
+event_type = moved
+old_site_id = 1
+new_site_id = 2
+changed_by = 7
+
+Отправили в ремонт:
+
+device_id = 15
+event_type = sent_to_repair
+notes = "Неисправность блока питания"
+changed_by = 7
+
+Вернули:
+
+device_id = 15
+event_type = returned_from_repair
+notes = "Блок питания заменён"
+changed_by = 7
+
+Списали:
+
+device_id = 15
+event_type = written_off
+notes = "Не подлежит ремонту"
+changed_by = 7
+А замену?
+
+Не будем делать отдельное сложное событие replaced.
+
+Замена — это две операции:
+
+старое устройство #15
+        ↓
+     removed
+
+новое устройство #27
+        ↓
+     installed
+
+А подробности самой замены могут находиться в Ticket/Comment.
+
+Так модель остаётся простой.

@@ -3,6 +3,7 @@
 docker compose -f docker/docker-compose.yml ps
 
 docker compose -f docker/docker-compose.yml exec postgres psql -U servicehub -d servicehub
+docker compose  exec postgres psql -U servicehub -d servicehub
  - подключиться к базе
 
 внутри psql:
@@ -22,3 +23,5 @@ docker compose -f docker/docker-compose.yml config - посмотреть кон
 docker compose -f docker/docker-compose.yml build php - построить только сервис php
 
 PostgreSQL доступен на localhost:5432 с  компьютера.
+
+ docker compose exec php bash - в контейнер php
