@@ -16,6 +16,7 @@ updated_at
 Company
  ├── hasMany Contacts
  ├── hasMany Sites
+ Company 1 ─── N Contract
 
  Если deleted_at IS NULL → запись действующая
 

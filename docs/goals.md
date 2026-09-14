@@ -37,3 +37,23 @@ params
 query
 navigation
 guards
+
+***
+
+Тесты:
+
+PHPUnit — основы и структура тестов;
+Feature tests — HTTP-запросы, авторизация, validation, response;
+Unit tests — отдельные классы и бизнес-логику;
+Laravel RefreshDatabase;
+factories и почему они нужны именно для тестов;
+создание связанных тестовых данных;
+assertions;
+тестирование Eloquent;
+тестирование Service/Use Case классов;
+permissions/authorization;
+негативные сценарии — что должно произойти при ошибке;
+mocking и когда он действительно нужен;
+как читать падающий тест и исправлять проблему.
+
+***

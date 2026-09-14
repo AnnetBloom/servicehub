@@ -181,3 +181,7 @@ Vue
 Vite
 PostgreSQL
 VS Code
+
+То есть порядок у нас теперь зафиксирован:
+
+Factories → Authentication → Roles/Authorization → Use Cases → Tests

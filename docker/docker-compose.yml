@@ -15,3 +15,13 @@ services:
     # монтирует весь servicehub в PHP-контейнер.
     volumes:
       - ..:/var/www/html
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    volumes:
+      - ..:/var/www/html
+    depends_on:
+      - php
