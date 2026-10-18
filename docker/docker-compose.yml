@@ -12,6 +12,9 @@ services:
       #context: ..  - берёт корень проекта servicehub как build context.
       context: ..
       dockerfile: docker/php/Dockerfile
+    # Переопределяем пользователя контейнера вашим локальным UID/GID.
+    # PHP-FPM автоматически запустится от имени этого пользователя.
+    #user: "${UID:-1000}:${GID:-1000}"
     # монтирует весь servicehub в PHP-контейнер.
     volumes:
       - ..:/var/www/html
@@ -25,3 +28,8 @@ services:
       - ..:/var/www/html
     depends_on:
       - php
+  redis:
+    image: redis:8-alpine
+    #ports:
+    #  - "6379:6379"
+    #внутри Docker-сети Laravel сможет обращаться к Redis как redis:6379.

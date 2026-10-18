@@ -28,3 +28,24 @@ PostgreSQL доступен на localhost:5432 с  компьютера.
 
  если ошибка на права:
  docker compose exec php chown -R www-data:www-data storage bootstrap/cache
+
+ Пользователи:
+
+ pavel@gmail.com
+ test12345
+
+
+ docker compose exec redis redis-cli  - Redis
+
+ SCAN 0 MATCH *queues* COUNT 100 - покажет ключи Redis, связанные с очередями.
+ SCAN 0
+ LLEN laravel-database-queues:default - посмотрим содержимое laravel-database-queues:default
+
+ LRANGE laravel-database-queues:default 0 -1   - посмотреть сам job 
+
+ Queue::connection('redis')->size('default')  - «Сколько сейчас jobs лежит в очереди default?» 
+
+ ****
+
+ php artisan optimize:clear
+ php artisan view:cache

@@ -9,6 +9,8 @@ use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Site;
 use \App\Models\DeviceType;
+use \App\Models\Device;
+use \App\Models\DeviceModel;
 
 /**DatabaseSeeder у нас сейчас отвечает за базовые справочные данные — роли и permissions.
  *  А тестовые данные будем создавать фабриками отдельно в tinker, когда понадобится. */
@@ -44,19 +46,19 @@ class DatabaseSeeder extends Seeder
 
         Contact::factory()
             ->for($company)
-            ->create();*/
+            ->create();
 
         $this->call([
             RoleSeeder::class,
             PermissionSeeder::class,
             RolePermissionSeeder::class,
-        ]);
+        ]);*/
 
         // Выполнить 1 раз в tinker
 
         //Site::factory()->create();
 
-       /* $company = Company::first();
+      /* $company = Company::first();
 
         Site::factory()
             ->for($company)
@@ -65,7 +67,9 @@ class DatabaseSeeder extends Seeder
             
 
         //DeviceType::factory(10)->create();
+        //DeviceModel::factory(10)->create();
+        Device::factory(5)->create();
 
-        //Device::factory()->create();
+       User::factory(10)->create();
     }
 }
