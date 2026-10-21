@@ -9,5 +9,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/companies', [CompanyController::class, 'index']);
-Route::get('/companies/{company}', [CompanyController::class, 'show']);
+Route::controller(CompanyController::class)->group(function() {
+    Route::get('/companies', 'index');
+    Route::get('/companies/{company}', 'show');
+    Route::post('/companies', 'store');
+});
+
+
+
