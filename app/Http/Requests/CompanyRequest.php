@@ -24,7 +24,7 @@ class CompanyRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'website' => ['nullable', 'string', 'max:255'],
+            'website' => ['nullable', 'string', 'url', 'max:255'],
         ];
     }
 }

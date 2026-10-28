@@ -1,6 +1,9 @@
 FROM composer:2 AS composer
 
-FROM php:8.5-fpm
+FROM php:8.5.12-fpm
+
+RUN echo 'session.upload_progress.enabled=0' \
+    > /usr/local/etc/php/conf.d/99-security.ini
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 

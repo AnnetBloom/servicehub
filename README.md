@@ -49,3 +49,17 @@ PostgreSQL доступен на localhost:5432 с  компьютера.
 
  php artisan optimize:clear
  php artisan view:cache
+
+***
+У меня отдельный Vue 3 + Vite в каталоге frontend/, а Laravel - API-бэкенд
+
+запустила
+npm create vite@latest frontend -- --template vue
+
+Теперь:
+ Laravel API — http://localhost:8000
+Vue — http://localhost:5173 - в отдельной папке frontend
+
+В дальнейшем:
+cd /servicehub/frontend
+npm run dev
