@@ -31,4 +31,18 @@ class CompanyController extends Controller
         return new CompanyResource($company);
     }
 
+    public function update(CompanyRequest $request, Company $company)
+    {
+        $company->update($request->validated());
+
+        return new CompanyResource($company);
+    }
+
+    public function destroy(Company $company)
+    {
+        $company->delete();
+
+        return response()->noContent();
+    }
+
 }

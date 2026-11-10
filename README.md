@@ -63,3 +63,7 @@ Vue — http://localhost:5173 - в отдельной папке frontend
 В дальнейшем:
 cd /servicehub/frontend
 npm run dev
+
+
+403 — нет разрешения выполнить действие.
+422 — данные не прошли валидацию.

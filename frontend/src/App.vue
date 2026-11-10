@@ -20,27 +20,34 @@ const selectedCompany = ref(null)
 const detailsLoading = ref(false)
 const detailsError = ref('')
 
+const editingCompany = ref(false)
+const editError = ref('')
 
+const editName = ref('')
+const editWebsite = ref('')
+const updating = ref(false)
+
+const editFieldsErrors = ref({})
 
 async function loadCompanyDetails(id) {
-    console.log('Clicked company ID:', id)
+    //console.log('Clicked company ID:', id)
     detailsLoading.value = true
     detailsError.value = ''
     selectedCompany.value = null
 
     try {
         const response = await fetch(`${API_BASE_URL}/companies/${id}`)
-        console.log('Response status:', response.status)
+        //console.log('Response status:', response.status)
 
         const result = await response.json()
-        console.log('API response:', result)
+        //console.log('API response:', result)
 
         if (!response.ok) {
             throw new Error('Ошибка сервера: невозможно загрузить компанию')
         }
 
         selectedCompany.value = result.data
-        console.log('Selected company:', selectedCompany.value)
+        //console.log('Selected company:', selectedCompany.value)
     } catch (error) {
         detailsError.value = error.message || 'Не удалось загрузить компанию'
     } finally {
@@ -48,6 +55,66 @@ async function loadCompanyDetails(id) {
     }
 }
 
+function startEditing() {
+    editName.value = selectedCompany.value.name
+    editWebsite.value = selectedCompany.value.website || ''
+    editError.value = ''
+    editingCompany.value = true
+}
+
+
+async function updateCompany() {
+    editFieldsErrors.value = {}
+    if (updating.value) return
+
+    updating.value = true
+    editError.value = ''
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/companies/${selectedCompany.value.id}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: editName.value,
+                    website: editWebsite.value || null,
+                }),
+            }
+        )
+
+        const result = await response.json()
+
+        if (!response.ok) {
+             if (response.status === 422 && result.errors) {
+                    editFieldsErrors.value = result.errors
+                    throw new Error('Please correct the errors in the form')
+                }
+
+                throw new Error(result.message || 'Failed to update company')
+            }
+        }
+
+        selectedCompany.value = result.data
+
+        const index = companies.value.findIndex(
+            company => company.id === result.data.id
+        )
+
+        if (index !== -1) {
+            companies.value[index] = result.data
+        }
+
+        editingCompany.value = false
+    } catch (err) {
+        editError.value = err.message || 'Failed to update company'
+    } finally {
+        updating.value = false
+    }
+}
 
 
 async function loadCompanies() {
@@ -185,13 +252,54 @@ onMounted(loadCompanies)
     </form>
 
     <section v-if="selectedCompany" class="message">
-        <h2>Company details</h2>
+        <h2>Детали компании</h2>
         <p>Name: {{ selectedCompany.name }}</p>
         <p v-if="selectedCompany.website">
             Website: {{ selectedCompany.website }}
         </p>
-        <button type="button" @click="selectedCompany = null">
-            Close details
+        <button type="button" 
+            @click="startEditing" 
+            v-if="!editingCompany">
+            Редактировать компанию
+        </button>
+
+        <form v-if="editingCompany" @submit.prevent="updateCompany">
+            <h3>Редактировать компанию</h3>
+
+            <label for="edit-name">Названиие *</label>
+            <input
+                id="edit-name"
+                v-model.trim="editName"
+                required
+                maxlength="255"
+            />
+            <p v-if="editFieldsErrors.name" class="error">
+                {{ editFieldsErrors.name[0] }}
+            </p>
+
+            <label for="edit-website">Сайт</label>
+            <input
+                id="edit-website"
+                v-model.trim="editWebsite"
+                type="url"
+            />
+            <p v-if="editFieldsErrors.website" class="error">
+                {{ editFieldsErrors.website[0] }}
+            </p>
+
+            <p v-if="editError" class="error">{{ editError }}</p>
+
+            <button type="submit" :disabled="updating">
+                {{ updating ? 'Сохраняем…' : 'Сохранить изменения' }}
+            </button>
+
+            <button type="button" @click="editingCompany = false">
+                Отмена
+            </button>
+        </form>
+
+         <button type="button" @click="selectedCompany = null">
+            Скрыть детали
         </button>
     </section>
 
@@ -214,11 +322,11 @@ onMounted(loadCompanies)
         >
           <div>
             <h2>
-                <button @click="loadCompanyDetails(company.id)">
+                <button type="button" @click="loadCompanyDetails(company.id)">
                     {{ company.name }}
-                </button>
-            <p class="company-id">ID: {{ company.id }}</p>
+                </button>            
             </h2>
+            <p class="company-id">ID: {{ company.id }}</p>
           </div>
 
           <a
@@ -234,23 +342,9 @@ onMounted(loadCompanies)
       </div>
 
       <p v-else class="message">Компаний пока нет.</p>
-
-
-     
-
     </template>
 
-     <section v-if="selectedCompany">
-            <h2>Company details</h2>
-
-            <p>Name: {{ selectedCompany.name }}</p>
-            <p v-if="selectedCompany.website">
-                Website: {{ selectedCompany.website }}
-            </p>
-       </section>
-
-    <p v-if="detailsLoading">Loading details...</p>
-    <p v-if="detailsError">{{ detailsError }}</p>
+     
   </main>
 </template>
 

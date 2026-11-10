@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\Company;
 
 class CompanyApiTest extends TestCase
 {
@@ -51,5 +52,29 @@ class CompanyApiTest extends TestCase
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['website']);
+    }
+
+    public function test_updating_company_returns_updated_data(): void
+    {
+        $company = Company::create([
+            'name' => 'Old company name',
+            'website' => 'https://old.example.com',
+        ]);
+
+        $response = $this->putJson("/api/companies/{$company->id}", [
+            'name' => 'Updated company name',
+            'website' => 'https://new.example.com',
+        ]);
+
+        $response->assertOk()
+            ->assertJsonPath('data.id', $company->id)
+            ->assertJsonPath('data.name', 'Updated company name')
+            ->assertJsonPath('data.website', 'https://new.example.com');
+
+        $this->assertDatabaseHas('companies', [
+            'id' => $company->id,
+            'name' => 'Updated company name',
+            'website' => 'https://new.example.com',
+        ]);
     }
 }
